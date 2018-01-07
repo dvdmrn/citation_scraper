@@ -111,8 +111,8 @@ def handleProblemKids(search_query,firstResultDict,firstProbability,title):
 		print("+ comparing: "+pubdata['title']+"\n    -p(match): "+str(pMatch))
 		queries.append({"data":pubdata,"p":pMatch})
 	
-	print("---")
-	mostLikely = max(queries)
+	mostLikely = max(queries,key=lambda x:x['p'])
+
 	print("........................................................")
 	print("The best I could find is: "+mostLikely['data']['title']+" with "+str(mostLikely['p'])+" confidence.")
 	return mostLikely['data']
