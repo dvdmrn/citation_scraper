@@ -25,11 +25,20 @@ def getJournalAbbrev(journal):
 		print("Could not find ISO abbreviation. Using full name.")
 		return journal
 
+def getPubKeyValue(pubdata,keys,key):
+	if(key in keys):
+		return pubdata[key].strip()
+	else:
+		return ""
+
 def formatCitation(pubdata):
-	volume = pubdata['volume'].strip()
-	number = pubdata['number'].strip()
-	journal = pubdata['journal'].strip()
-	pages = pubdata['pages'].strip().replace("--","-")
+	keys = pubdata.keys()
+	volume = getPubKeyValue(pubdata, keys,'volume')
+	number = getPubKeyValue(pubdata, keys,'number')
+	journal = getPubKeyValue(pubdata, keys, 'journal')
+	if not journal:
+		journal = getPubKeyValue(pubdata, keys, 'booktitle')	
+	pages = getPubKeyValue(pubdata, keys,'pages').replace("--","-")
 
 	# print("data: ",volume, number, journal, pages)
 
@@ -69,10 +78,11 @@ def getPubInfo(title):
 	# no match --
 	if(probabilityOfMatch < matchThreshold):
 		print("\!/ WARNING \!/ match below confidence levels\n    edit distance: "+str(editDistance)+"\n    match confidence [0-1]: "+str(probabilityOfMatch))
-		print("    * Manually verify contents after processing is complete.")
-		print("--------------------------------------------------------//\n")
-		problemkids.append({"title":title,"firstResult":pubdata,"results":search_query})
+		
+		pubdata = handleProblemKids(search_query, pubdata, probabilityOfMatch,title)
+		print("\!/ Manually verify citation after processing is complete.")
 		citation = formatCitation(pubdata)+" !!! VERIFY"
+		print("--------------------------------------------------------//\n")
 		return citation
 	# match --
 	else:
@@ -85,12 +95,39 @@ def getPubInfo(title):
 	return citation
 
 
-def handleProblemKids(problemKid):
-	problemkids["results"];
-	print("\n==========================================================\nmismatched titles\nConfirm if title is a good enough match (y) or to move onto the next search result (n) or previous (b)")
+def handleProblemKids(search_query,firstResultDict,firstProbability,title):
+	queries = [{"data":firstResultDict,"p":firstProbability}]
+	print("........................................................")
+	print("evaluating the next 5 search results for maximum match...")
+	pMatch = 0
 
-	print("INPUT TITLE:   "+problemKid["title"]+"\nSEARCH RESULT: "+problemKid["firstResult"]) 
-	response = raw_input("\{(y)es/(n)ext/(b)ack\}")
+	for i in xrange(5):
+		try:
+			pubdata = next(search_query).fill().bib
+		except:
+			break
+		print("---")
+		pMatch = matchProbability(pubdata,title)
+		print("+ comparing: "+pubdata['title']+"\n    -p(match): "+str(pMatch))
+		queries.append({"data":pubdata,"p":pMatch})
+	
+	print("---")
+	mostLikely = max(queries)
+	print("........................................................")
+	print("The best I could find is: "+mostLikely['data']['title']+" with "+str(mostLikely['p'])+" confidence.")
+	return mostLikely['data']
+
+def matchProbability(pubdata, title):
+	s1 = str(pubdata['title'].strip(".").lower())
+	s2 = str(title.strip().strip(".").lower())
+	editDistance = levenshteinDistance(s1,s2)
+	return (len(title)-editDistance)/ float(len(title))
+
+	# problemkids["results"];
+	# print("\n==========================================================\nmismatched titles\nConfirm if title is a good enough match (y) or to move onto the next search result (n) or previous (b)")
+
+	# print("INPUT TITLE:   "+problemKid["title"]+"\nSEARCH RESULT: "+problemKid["firstResult"]) 
+	# response = raw_input("\{(y)es/(n)ext/(b)ack\}")
 	# TODO: handle input
 
 def parseTitles(titles):
