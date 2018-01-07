@@ -1,5 +1,9 @@
 # citation_scraper
----
+
+### Dependencies:
+  * Python 2
+  * Scholarly (Install by opening a terminal window and typing `pip install scholarly`)
+
 ### How to use:
   * Populate a single column .csv with a list of paper titles
   * Open the program in terminal by typing `python citation_scraper.py`
