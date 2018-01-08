@@ -2,8 +2,8 @@
 
 import scholarly
 import csv
-import time
 import io
+import sys
 
 """
 volume(number):pagestart-pageend
@@ -130,7 +130,7 @@ def matchProbability(pubdata, title):
 	# response = raw_input("\{(y)es/(n)ext/(b)ack\}")
 	# TODO: handle input
 
-def parseTitles(titles):
+def parseTitles(titles,name):
 	citationList = []
 	for title in titles:
 		if len(title.strip()) > 3:
@@ -138,11 +138,11 @@ def parseTitles(titles):
 			citationList.append({"title":title,"citation":citation})
 	# TODO: handle problem kids
 	# for problemKid in problemkids:
-	writeCSV(citationList)
+	writeCSV(citationList,name)
 
-def writeCSV(rows):
+def writeCSV(rows,name):
 	print("writing csv...")
-	with open ("citationList.csv","wb") as csvfile:
+	with open (name+"_citation_list.csv","wb") as csvfile:
 		fieldNames = ["title","citation"]
 		writer = csv.DictWriter(csvfile, fieldnames=fieldNames)
 		writer.writeheader()
@@ -165,13 +165,17 @@ def levenshteinDistance(s1, s2):
 
 
 def main():
-	filename = raw_input('enter file path: ')
+	if(len(sys.argv)>1):
+		print("FN: ",filename)
+	else:
+		filename = raw_input('enter file path: ')
 	if(".csv" not in filename):
 		print("Invalid filename. Remember to include the .csv extension!")
 		return
    	with open(filename, "rb") as csvfile:
    		print("opening: "+filename+"...")
-   		parseTitles(csvfile)
+   		name = filename[:-4]
+   		parseTitles(csvfile,name)
    	print("Complete! Always remember to have fun!")
 
 
