@@ -6,7 +6,11 @@ import io
 import sys
 
 """
+TODO: write confidence levels in .csv
+
+Citation format:
 volume(number):pagestart-pageend
+
 
 """
 
@@ -166,7 +170,7 @@ def levenshteinDistance(s1, s2):
 
 def main():
 	if(len(sys.argv)>1):
-		print("FN: ",filename)
+		filename = sys.argv[1]
 	else:
 		filename = raw_input('enter file path: ')
 	if(".csv" not in filename):
