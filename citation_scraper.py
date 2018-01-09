@@ -72,10 +72,10 @@ def getPubInfo(title):
             print("If this is happening a lot, you may have exceeded the number of requests to make to Google Scholar and they may be blocking your access.\n========================================================")
         return {"citation":"N/A","confidence":"-"}
 
-    print("FOUND:               "+pubdata['title'])
+    print("FOUND:               "+pubdata['title'].encode('utf-8'))
     
     # gets the edit distance, if over the threshold it is probably not a match
-    s1 = str(pubdata['title'].strip(".").lower())
+    s1 = str(pubdata['title'].encode('utf-8').strip(".").lower())
     s2 = str(title.strip().strip(".").lower())
     editDistance = levenshteinDistance(s1,s2)
     probabilityOfMatch = max(0, ((len(title)-editDistance)/ float(len(title))) )
