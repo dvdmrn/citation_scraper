@@ -29,6 +29,13 @@ examineList = []
 maxPageDepth = 2
 
 def batch_process_pdf(directory):
+    """
+    batch_process_pdf
+    Iterates through all pdfs in directory and gets their doi
+
+    directory :=  a string
+    returns: nothing
+    """
     numOfFiles = 0
     numOfDois = 0
     print("searching "+directory+"...")
@@ -49,6 +56,13 @@ def batch_process_pdf(directory):
 
 
 def convert_pdf_to_txt(path):
+    """
+    convert_pdf_to_text()
+    gets text representation of a pdf and searches for the doi
+
+    path := a string
+    returns: a string or FALSE it's python get over it 
+    """
     print("+ parsing: "+path)
     rsrcmgr = PDFResourceManager()
     retstr = StringIO()
