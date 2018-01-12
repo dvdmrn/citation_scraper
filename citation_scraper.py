@@ -60,6 +60,25 @@ def getPubInfo(title):
         return
 
     citation = ""
+    if "doi" in title.lower():
+        print("\n--------------------------------------------------------\\\\\nsearching for doi: "+title)
+        search_query = scholarly.search_pubs_query(title)
+
+        try:
+            pubdata = next(search_query).fill().bib
+        except:
+            print("Unable to retrieve google scholar data :( skipping field...\n........................................................")
+            apiBlock += 1
+            if(apiBlock > 3):
+                print("If this is happening a lot, you may have exceeded the number of requests to make to Google Scholar and they may be blocking your access.\n========================================================")
+            return {"citation":"N/A","confidence":"-"}
+
+        print("FOUND:               "+pubdata['title'].encode('utf-8'))
+        probabilityOfMatch = "-" # TODO: figure out a metric, maybe grab the name and contrast its DOI? Scholarly does not provide doi data for some reason...
+        citation = formatCitation(pubdata)
+        print("cite: ",citation)
+        return {"citation":citation,"confidence":probabilityOfMatch}
+
     print("\n--------------------------------------------------------\\\\\nsearching for title: "+title)
     search_query = scholarly.search_pubs_query(title)
 

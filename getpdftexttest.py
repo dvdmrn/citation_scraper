@@ -4,7 +4,18 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from cStringIO import StringIO
 
+import sys, os
+
+
 def convert_pdf_to_txt(path):
+    """
+    convert_pdf_to_txt()
+    gets text representation of a pdf and searches for the doi
+
+    path := a string
+    returns: a string or FALSE it's python get over it 
+    """
+    print("+ parsing: "+path)
     rsrcmgr = PDFResourceManager()
     retstr = StringIO()
     codec = 'utf-8'
@@ -17,6 +28,9 @@ def convert_pdf_to_txt(path):
     caching = True
     pagenos=set()
 
+    pageDepth = 0
+
+    # look at the first maxPageDepth pages of a pdf
     for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
         interpreter.process_page(page)
 
@@ -26,3 +40,5 @@ def convert_pdf_to_txt(path):
     device.close()
     retstr.close()
     return text
+
+print convert_pdf_to_txt("12_pg01.pdf")

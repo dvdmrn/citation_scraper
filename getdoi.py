@@ -13,8 +13,6 @@ TODO:
 We are doing a shallow search (the first 2 pages of a doc) to save time.
 We will need to loop back and do a deep search if we can't find the doi
 
-2. Sometimes dois don't have a :
-
 3. pipe to citation_scraper.py
 
 4. possible misclassification if the doc lists a doi for another paper before this one.
@@ -53,6 +51,7 @@ def batch_process_pdf(directory):
     print("==================================\nComplete!\nFound dois for "+str(completion)+"% of files\nI could not find dois in the following files: ")
     for f in examineList:
         print("    - "+f)
+    print("--dois: "+str(doiList))
 
 
 def convert_pdf_to_txt(path):
@@ -95,7 +94,7 @@ def convert_pdf_to_txt(path):
 
     prunedText = text.replace(" ","") # we remove whitespace because sometimes the dois l o o k  l i k e  t h i s 
     # search for a DOI in a form that looks like `doi : xxx/xxx.xxx.xx/x`
-    doi = re.search('(doi:|DOI:).+/(\w+\.|\w+/|\w+)*', prunedText)
+    doi = re.search('(doi|DOI).+/(\w+\.|\w+/|\w+)*', prunedText)
     if doi:
         print("    - "+doi.group(0))
         return doi.group(0)
@@ -106,7 +105,7 @@ def convert_pdf_to_txt(path):
         print("    - "+doi.group(0))
         return doi.group(0)
     else:
-        # no pdf found, look through the rest of the pdf (maybe it's at the bottom)
+        # todo: no pdf found, look through the rest of the pdf (maybe it's at the bottom)
         print("    :( no doi found")
         return False
     
