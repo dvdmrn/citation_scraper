@@ -19,3 +19,10 @@ def levenshteinDistance(s1, s2):
 def checkUnicode(s):
     if isinstance(s, unicode):
         return s.encode('utf-8')
+    else:
+        return s
+
+def purgeUnicodeInListOfDicts(lod):
+    for d in lod:
+        for key in d:
+            d[key] = checkUnicode(d[key])

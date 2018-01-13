@@ -7,7 +7,9 @@ from cStringIO import StringIO
 import sys, os
 import helpers
 
-maxPageDepth = 88
+import getdoi
+
+maxPageDepth = 1
 
 def convert_pdf_to_txt(path):
     """
@@ -85,8 +87,33 @@ def wordMatch(found,source):
         if scrapedWords[i] in pdfWords:
             matchedWords += 1
             pdfWords[i] = pdfWords[i]+"-M" # flag as matched so we don't look at duplicates
-    print "words found online: "+str(len(scrapedWords))
-    print "words in pdf: "+str(len(pdfWords))
+    # print "words found online: "+str(len(scrapedWords))
+    # print "words in pdf: "+str(len(pdfWords))
     
-    print "number of matches: "+str(matchedWords)
-    print "proportion: "+str(matchedWords/float(len(scrapedWords)))
+    # print "number of matches: "+str(matchedWords)
+    # print "proportion: "+str(matchedWords/float(len(scrapedWords)))
+    confidence = matchedWords/float(len(scrapedWords))
+    return confidence
+
+
+def confidence_metric(article,pdfPath):
+    abstract = article.abstract
+    title = article.title
+    doi = article.doi
+    authors = article.authors
+    try:
+        onlineText = title+" "+abstract+" "+doi
+    except:
+        if title:
+            print "\!/ WARNING: \!/ not enough information for string comparison, comparing title..."
+            onlineText = title
+        else:
+            print "\!/ WARNING: \!/ not enough information for string comparison, flagging as 0 confidence."
+            return 0
+    for a in authors:
+        onlineText+" "+a
+
+    pdfText = getdoi.convert_pdf_to_txt(pdfPath,1)
+    conf = wordMatch(helpers.checkUnicode(onlineText), pdfText)
+    print "confidence: "+str(conf)
+    return conf

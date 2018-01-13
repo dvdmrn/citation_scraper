@@ -44,14 +44,18 @@ def batch_process_pdfs(directory):
             doi = find_doi(directory+filename)
             if doi:
                 numOfDois += 1
-                doiList.append(doi)
+
+                entry = {"file":filename,"doi":doi}
+                doiList.append(entry)
             else:
+                entry = {"file":filename,"doi":0}
+                doiList.append(entry)
                 examineList.append(filename)
     completion = numOfDois/float(numOfFiles) * 100
-    print("==================================\nComplete!\nFound dois for "+str(completion)+"% of files\nI could not find dois in the following files: ")
+    print("......................................................\nComplete!\nFound dois for "+str(completion)+"% of files\nI could not find dois in the following files: ")
     for f in examineList:
         print("    - "+f)
-    print("--dois: "+str(doiList))
+    return doiList
 
 
 def convert_pdf_to_txt(path,maxPageDepth):
@@ -81,7 +85,7 @@ def convert_pdf_to_txt(path,maxPageDepth):
     for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
         pageDepth += 1
         if(maxPageDepth>2):
-            print "searching page: "+str(pageDepth)
+            print "    > searching page: "+str(pageDepth)
         if pageDepth > maxPageDepth:
             break
         else:
@@ -105,7 +109,7 @@ def find_doi(path):
         print("    - "+doi.group(0))        
         return doi.group(0).strip(".")
     else:
-        print("doi not found on first page, initializing deep search...")
+        print("    - doi not found on first page, initializing deep search...")
         text = convert_pdf_to_txt(path,99) # deep search
         prunedText = text.replace(" ","")
         doi = re.search('10\.\w+/(\w+\.|\w+/|\w+(-|_)?)*', prunedText) 
