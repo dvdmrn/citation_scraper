@@ -1,5 +1,6 @@
 import metapub
 import confidence as c
+import helpers
 
 fetch = metapub.PubMedFetcher()
 
@@ -59,19 +60,28 @@ def create_citation(pm_article):
 # 	return article
 
 # print "hello"
-id =  get_pmid("10.1039/c4fo00570h")
-article = lookup_pmid(id)
-
-abstract = article.abstract
-title = article.title
-doi = article.doi
-authors = article.authors
-print(str(authors))
-onlineText = title+" "+abstract+" "+doi
 
 
-pdfText = c.convert_pdf_to_txt("12_pg01.pdf")
 
-print("typeinfo:",type(onlineText),type(pdfText))
-print (c.wordMatch(onlineText.encode('utf-8'), pdfText))
+
+
+#  ==================================================
+# id =  get_pmid("10.1039/c4fo00570h")
+# article = lookup_pmid(id)
+
+# abstract = article.abstract
+# title = article.title
+# doi = article.doi
+# authors = article.authors
+# print(str(authors))
+# onlineText = title+" "+abstract+" "+doi
+# for a in authors:
+# 	onlineText+" "+a
+# 	print a
+
+
+# pdfText = c.convert_pdf_to_txt("12_pg01.pdf")
+
+# print("typeinfo:",type(onlineText),type(pdfText))
+# print (c.wordMatch(helpers.checkUnicode(onlineText), pdfText))
 

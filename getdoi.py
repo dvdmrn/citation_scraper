@@ -24,11 +24,11 @@ We will need to loop back and do a deep search if we can't find the doi
 
 doiList = []
 examineList = []
-maxPageDepth = 2
+maxDepth = 2 # only look at the first 2 pages of the pdf
 
-def batch_process_pdf(directory):
+def batch_process_pdfs(directory):
     """
-    batch_process_pdf
+    batch_process_pdfs
     Iterates through all pdfs in directory and gets their doi
 
     directory :=  a string
@@ -41,7 +41,7 @@ def batch_process_pdf(directory):
         if filename[-3:] == "pdf":
             numOfFiles += 1
             print("\n---\nfound document: "+filename)
-            doi = convert_pdf_to_txt(directory+filename)
+            doi = find_doi(directory+filename)
             if doi:
                 numOfDois += 1
                 doiList.append(doi)
@@ -54,7 +54,7 @@ def batch_process_pdf(directory):
     print("--dois: "+str(doiList))
 
 
-def convert_pdf_to_txt(path):
+def convert_pdf_to_txt(path,maxPageDepth):
     """
     convert_pdf_to_text()
     gets text representation of a pdf and searches for the doi
@@ -80,6 +80,8 @@ def convert_pdf_to_txt(path):
     # look at the first maxPageDepth pages of a pdf
     for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
         pageDepth += 1
+        if(maxPageDepth>2):
+            print "searching page: "+str(pageDepth)
         if pageDepth > maxPageDepth:
             break
         else:
@@ -87,30 +89,33 @@ def convert_pdf_to_txt(path):
 
 
     text = retstr.getvalue()
-
     fp.close()
     device.close()
     retstr.close()
 
-    prunedText = text.replace(" ","") # we remove whitespace because sometimes the dois l o o k  l i k e  t h i s 
-    # search for a DOI in a form that looks like `doi : xxx/xxx.xxx.xx/x`
-    doi = re.search('(doi|DOI).+/(\w+\.|\w+/|\w+)*', prunedText)
-    if doi:
-        print("    - "+doi.group(0))
-        return doi.group(0)
-    else:
-        # search for a doi in the form `http://dx.doi.org/10.1080/14737140.2017.1381565`
-        doi = re.search('doi.org/(\w+\.|\w+/|\w+)*', prunedText)
-    if doi:
-        print("    - "+doi.group(0))
-        return doi.group(0)
-    else:
-        # todo: no pdf found, look through the rest of the pdf (maybe it's at the bottom)
-        print("    :( no doi found")
-        return False
+    return text
     
 
+def find_doi(path):
+    text =  convert_pdf_to_txt(path,2) # start with a shallow search
+    prunedText = text.replace(" ","") # we remove whitespace because sometimes the dois l o o k  l i k e  t h i s 
+    # search for a DOI in a form that looks like `doi : xxx/xxx.xxx.xx/x`
+    doi = re.search('10\.\w+/(\w+\.|\w+/|\w+(-|_)?)*', prunedText)
+    if doi:
+        print("    - "+doi.group(0))        
+        return doi.group(0).strip(".")
+    else:
+        print("doi not found on first page, initializing deep search...")
+        text = convert_pdf_to_txt(path,99) # deep search
+        prunedText = text.replace(" ","")
+        doi = re.search('10\.\w+/(\w+\.|\w+/|\w+(-|_)?)*', prunedText) 
+    if doi:
+        print("    - "+doi.group(0))        
+        return doi.group(0).strip(".")
+    else:
+        print("could not find doi :(")
+        return 0
 
 # pdfTxt = convert_pdf_to_txt("test2.pdf")
 
-batch_process_pdf("testpdfs/")
+# batch_process_pdf("testpdfs/")

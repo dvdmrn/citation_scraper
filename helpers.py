@@ -14,3 +14,8 @@ def levenshteinDistance(s1, s2):
                 distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
         distances = distances_
     return distances[-1]
+
+
+def checkUnicode(s):
+    if isinstance(s, unicode):
+        return s.encode('utf-8')
