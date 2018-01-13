@@ -84,13 +84,16 @@ def wordMatch(found,source):
     # scrape, we compare everything as the proportion to which the
     # pdf scrape matches the abstract
     for i in xrange(0,len(scrapedWords)-1):
-        if scrapedWords[i] in pdfWords:
-            matchedWords += 1
-            pdfWords[i] = pdfWords[i]+"-M" # flag as matched so we don't look at duplicates
-    # print "words found online: "+str(len(scrapedWords))
-    # print "words in pdf: "+str(len(pdfWords))
+        for j in xrange(0, len(pdfWords)-1):
+            if scrapedWords[i] == pdfWords[j]:
+                pdfWords[j] = pdfWords[j]+"-M" # flag as matched so we don't look at duplicates
+                matchedWords += 1
+                break
+
+    print "words found online: "+str(len(scrapedWords))
+    print "words in pdf: "+str(len(pdfWords))
     
-    # print "number of matches: "+str(matchedWords)
+    print "number of matches: "+str(matchedWords)
     # print "proportion: "+str(matchedWords/float(len(scrapedWords)))
     confidence = matchedWords/float(len(scrapedWords))
     return confidence
