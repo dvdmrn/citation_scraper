@@ -5,7 +5,7 @@ import getpubmed
 import csv
 
 def writeCSV(name,rows):
-    print("writing"+name+" ...")
+    print("writing: "+name+" ...")
     with open (name,"wb") as csvfile:
         fieldNames = ["file","title","citation","confidence"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldNames)

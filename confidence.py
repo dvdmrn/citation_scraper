@@ -90,10 +90,10 @@ def wordMatch(found,source):
                 matchedWords += 1
                 break
 
-    print "words found online: "+str(len(scrapedWords))
-    print "words in pdf: "+str(len(pdfWords))
+    # print "words found online: "+str(len(scrapedWords))
+    # print "words in pdf: "+str(len(pdfWords))
     
-    print "number of matches: "+str(matchedWords)
+    # print "number of matches: "+str(matchedWords)
     # print "proportion: "+str(matchedWords/float(len(scrapedWords)))
     confidence = matchedWords/float(len(scrapedWords))
     return confidence

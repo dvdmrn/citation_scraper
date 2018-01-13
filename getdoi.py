@@ -52,7 +52,9 @@ def batch_process_pdfs(directory):
                 doiList.append(entry)
                 examineList.append(filename)
     completion = numOfDois/float(numOfFiles) * 100
-    print("......................................................\nComplete!\nFound dois for "+str(completion)+"% of files\nI could not find dois in the following files: ")
+    print("......................................................\nComplete!\nFound dois for "+str(completion)+"% of files")
+    if completion < 100:
+        print("nI could not find dois in the following files: ")
     for f in examineList:
         print("    - "+f)
     return doiList
