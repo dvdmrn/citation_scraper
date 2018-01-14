@@ -104,19 +104,21 @@ def confidence_metric(article,pdfPath):
     title = article.title
     doi = article.doi
     authors = article.authors
+    pdfText = getdoi.convert_pdf_to_txt(pdfPath,1)
     try:
         onlineText = title+" "+abstract+" "+doi
     except:
         if title:
             print "\!/ WARNING: \!/ not enough information for string comparison, comparing title..."
             onlineText = title
+            quarterOfPage = len(pdfText)/4
+            pdfText = pdfText[0:quarterOfPage]
         else:
             print "\!/ WARNING: \!/ not enough information for string comparison, flagging as 0 confidence."
             return 0
     for a in authors:
         onlineText+" "+a
 
-    pdfText = getdoi.convert_pdf_to_txt(pdfPath,1)
-    conf = wordMatch(helpers.checkUnicode(onlineText), pdfText)
+    conf = wordMatch(helpers.checkUnicode(onlineText), helpers.checkUnicode(pdfText))
     print "confidence: "+str(conf)
     return conf
